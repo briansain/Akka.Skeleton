@@ -7,6 +7,6 @@ Akka.Skeleton is a barebones setup of [Akka .Net](https://google.com). I created
 - [X] Actor
 
 ## To-Do
-- [] Akka.Skeleton.Persistence
-- [] Akka.Skeleton.Cluster
-- [] Akka.Skeleton.UnitTests
+- [ ] Akka.Skeleton.Persistence
+- [ ] Akka.Skeleton.Cluster
+- [ ] Akka.Skeleton.UnitTests

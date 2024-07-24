@@ -22,11 +22,17 @@ This will setup a new sql server but it won't create the akkaskeleton database. 
 1. `docker cp ./sql-init.sh sqlserver:.`
 2. `docker exec sqlserver bash sql-init.sh`
 
+## Akka.Skeleton.Cluster
+This project sets up only what's necessary to start working with Akka.Cluster. The **EchoActor** uses **DistPubSub** to show that some work is happening. Run the `lighthouse.docker-compose` file to setup lighthouse. This is required for the cluster to form with the seed.
+```
+docker-compose -f lighthouse.docker-compose up -d
+```
+
 ## Included
 - [X] Logging (with Serilog)
 - [X] Actor
 - [X] Akka.Skeleton.Persistence
+- [X] Akka.Skeleton.Cluster
 
 ## To-Do
-- [ ] Akka.Skeleton.Cluster
 - [ ] Akka.Skeleton.UnitTests

@@ -1,15 +1,14 @@
 ﻿using Akka.Actor;
-using Akka.Cluster.Hosting;
-using Akka.Cluster.Tools.Singleton;
 using Akka.Hosting;
 using Akka.Logger.Serilog;
-using Akka.Remote.Hosting;
-using Akka.Skeleton.Cluster.Actors;
+using Akka.Persistence.Sql.Hosting;
+using Akka.Skeleton.Persistence.Actors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using LinqToDB;
 
-namespace Akka.Skeleton.Cluster
+namespace Akka.Skeleton.Persistence
 {
     internal class Program
     {
@@ -21,7 +20,7 @@ namespace Akka.Skeleton.Cluster
                     .WriteTo.Console())
                 .ConfigureServices(services =>
                 {
-                    services.AddAkka("skeleton-service", builder =>
+                    services.AddAkka("crowdquery-service", builder =>
                     {
                         builder.ConfigureLoggers(configLoggers =>
                         {
@@ -30,16 +29,14 @@ namespace Akka.Skeleton.Cluster
                             configLoggers.ClearLoggers();
                             configLoggers.AddLogger<SerilogLogger>();
                         })
-                        .WithRemoting(port: 0)
-                        .WithClustering(new ClusterOptions()
-                        {
-                            SeedNodes = ["akka.tcp://skeleton-service@localhost:5053"],
-                            Roles = ["main"]
-                        })
-                        .WithDistributedPubSub("main")
+                        //.WithSqlPersistence("Host=localhost;Port=5432;database=akkaskeleton;username=postgres;password=postgrespassword;", ProviderName.PostgreSQL15)
                         .WithActors((actorSystem, registry) =>
                         {
-                            var echoActor = actorSystem.ActorOf<EchoActor>($"echo-actor");
+                            var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>(), "echo-actor");
+                            registry.Register<EchoActor>(echoActor);
+
+                            var statefulActor = actorSystem.ActorOf(Props.Create<StatefulActor>(), "stateful-actor");
+                            registry.Register<StatefulActor>(statefulActor);
                         });
                     });
                     services.AddHostedService<AkkaHostedService>();

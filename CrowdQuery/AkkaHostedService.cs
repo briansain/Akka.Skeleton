@@ -9,23 +9,15 @@ namespace Akka.Skeleton.Persistence
     internal class AkkaHostedService : IHostedService
     {
         private ActorRegistry _registry;
-        public AkkaHostedService(ActorRegistry actorRegistry)
+        private ActorSystem _system;
+        public AkkaHostedService(ActorSystem actorSystem, ActorRegistry actorRegistry)
         {
             _registry = actorRegistry;
+            _system = actorSystem;
         }
         public Task StartAsync(CancellationToken cancellationToken = default)
         {
-            var echoActor = _registry.Get<EchoActor>();
-            var statefulActor = _registry.Get<StatefulActor>();
-            while(true)
-            {
-                echoActor.Ask("Hello World");
-                echoActor.Ask(42);
-                echoActor.Ask(42.50);
-
-                statefulActor.Tell($"HelloWorld -> {DateTime.Now}");
-                Thread.Sleep(3000);
-            }
+            return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken = default)

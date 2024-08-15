@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Event;
 
-namespace Akka.Skeleton.Actors
+namespace Akka.Skeleton.Persistence.Actors
 {
     internal class EchoActor : ReceiveActor
     {
@@ -20,7 +20,29 @@ namespace Akka.Skeleton.Actors
             Receive<object>(msg =>
             {
                 Context.GetLogger().Error($"EchoActor: Received Unsupported Type {msg.GetType().Name}");
+                Self.Tell(PoisonPill.Instance);
             });
+
+            Context.ActorOf(Props.Create<LoggingActor>(), "logging-1");
         }
+    }
+
+    internal class LoggingActor : ReceiveActor
+    {
+        public LoggingActor()
+        {
+			Receive<string>(msg =>
+			{
+				Context.GetLogger().Info($"LoggingActor: Received {msg}");
+			});
+			Receive<int>(msg =>
+			{
+				Context.GetLogger().Info($"LoggingActor: Received {msg}");
+			});
+			Receive<object>(msg =>
+			{
+				Context.GetLogger().Error($"LoggingActor: Received Unsupported Type {msg.GetType().Name}");
+			});
+		}
     }
 }
